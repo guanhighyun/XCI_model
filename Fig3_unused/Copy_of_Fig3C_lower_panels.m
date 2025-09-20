@@ -1,0 +1,132 @@
+%clear; 
+% Time
+tspan = [0:10:50000];
+
+% Error tolerance
+options = odeset('RelTol',1e-6,'AbsTol',repmat(1e-8,[1,13]));
+
+% Set the value of nuclear volumes
+V_list = [1];
+
+for i = 1:numel(V_list)
+    V = V_list(i);
+    %initial conditions
+    act = 0; s1b = 0; x1f = 0; s2b = 0; x2f = 0; s3b = 0; x3f = 0; s4b = 0; x4f = 0;
+    x1b = 1/V; x2b = 2/V; x3b = 3/V; x4b = 4/V;
+    y0 = [act;x1f;x1b;s1b;x2f;x2b;s2b;x3f;x3b;s3b;x4f;x4b;s4b];
+    
+    % Solve equations
+    [t,y] = ode15s(@(tt,yy) ODE_model(tt,yy,V),tspan,y0,options);
+    actout = y(:,1)*V;
+    x1fout = y(:,2)*V;
+    x1bout = y(:,3)*V;
+    s1bout = y(:,4)*V;
+    x2fout = y(:,5)*V;
+    x2bout = y(:,6)*V;
+    s2bout = y(:,7)*V;
+    x3fout = y(:,8)*V;
+    x3bout = y(:,9)*V;
+    s3bout = y(:,10)*V;
+    x4fout = y(:,11)*V;
+    x4bout = y(:,12)*V;
+    s4bout = y(:,13)*V;
+
+    % Plot results
+    figure; plot(t, x1bout, 'LineWidth',3);  hold on; plot(t, x2bout, 'LineWidth',3); plot(t, x3bout, 'LineWidth',3); plot(t, x4bout, 'LineWidth',3); title('Bound Xist'); set(gca,'fontsize',25)
+    title([]); %xticks([0:600:1200]); xlim([0,1200]); ylim([0,100])
+    set(gca,'fontsize',40)
+end
+
+function dy = ODE_model(t,y,V)
+% a_act =  0.27/V; % activator synthesis rate from single X chromosome
+% d_act = 0.0068; % degradation rate of free activator 
+% K_n = 1.0; % quantity of bound SPEN at which activator synthesis rate is half max.
+% n = 9.63;% Hill coefficient for SPEN supressing activator synthesis rate. 
+% a_x = 0.35/V; % xist synthesis rate from single X chromosome
+% d_x = 0.0091; % degradation rate of Xist 
+% m = 2.84; % Hill coefficient for bound SPEN reducing dissociation rate Xist
+% K_S = 1.65; % quantity of SPEN at which Xist dissociation is half max
+% K_a = 1.83; % quantity of activator at which Xist transcription is half max
+% k1 = 0.0082*V; % rate constant for Xist binding to DNA
+% k2 = 2.33; % maximum dissociation rate for Xist
+% k4 = 0.28; % dissoication rate for bound SPEN
+% k3 = 0.00027*V; % association rate for SPEN
+% sT = 135/V;  % total SPEN quantity
+% XbsT =  100/V; % quantity of Xist binding sites
+% N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
+%                       % We let each chromosome be able to recruit and bind to all SPEN.
+
+% a_act =  66.8/V; % activator synthesis rate from single X chromosome
+% d_act = 0.048; % degradation rate of free activator 
+% K_n = 1.0; % quantity of bound SPEN at which activator synthesis rate is half max.
+% n = 10.0;% Hill coefficient for SPEN supressing activator synthesis rate. 
+% a_x = 5.9/V; % xist synthesis rate from single X chromosome
+% d_x = 0.0041; % degradation rate of Xist 
+% m = 3.85; % Hill coefficient for bound SPEN reducing dissociation rate Xist
+% K_S = 7.40; % quantity of SPEN at which Xist dissociation is half max
+% K_a = 76.5; % quantity of activator at which Xist transcription is half max
+% k1 = 0.0024*V; % rate constant for Xist binding to DNA
+% k2 = 4.21; % maximum dissociation rate for Xist
+% k4 = 8.78; % dissoication rate for bound SPEN
+% k3 = 0.014*V; % association rate for SPEN
+% sT = 194/V;  % total SPEN quantity
+% XbsT =  100/V; % quantity of Xist binding sites
+% N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
+%                       % We let each chromosome be able to recruit and bind to all SPEN.
+
+
+a_act =  66.8; % activator synthesis rate from single X chromosome
+d_act = 0.048; % degradation rate of free activator 
+K_n = 1.0; % quantity of bound SPEN at which activator synthesis rate is half max.
+n = 10.0;% Hill coefficient for SPEN supressing activator synthesis rate. 
+a_x = 5.9; % xist synthesis rate from single X chromosome
+d_x = 0.0041; % degradation rate of Xist 
+m = 3.85; % Hill coefficient for bound SPEN reducing dissociation rate Xist
+K_S = 7.40; % quantity of SPEN at which Xist dissociation is half max
+K_a = 76.5; % quantity of activator at which Xist transcription is half max
+k1 = 0.002;0.0024; % rate constant for Xist binding to DNA
+k2 = 4.21; % maximum dissociation rate for Xist
+k4 = 8.78; % dissoication rate for bound SPEN
+k3 = 0.00;0.014; % association rate for SPEN
+sT = 194;  % total SPEN quantity
+XbsT =  100; % quantity of Xist binding sites
+N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
+                      % We let each chromosome be able to recruit and bind to all SPEN.
+
+act = y(1); % Xist activator
+
+x1f = y(2); % free Xist produced by chromosome X1
+x1b = y(3); % bound Xist on chromosome X1
+s1b = y(4); % bound SPEN on chromosome X1
+
+x2f = y(5); % free Xist produced by chromosome X2
+x2b = y(6); % bound Xist on chromosome X2
+s2b = y(7); % bound SPEN on chromosome X2
+
+x3f = y(8); % free Xist produced by chromosome X3
+x3b = y(9); % bound Xist on chromosome X3
+s3b = y(10); % bound SPEN on chromosome X3
+
+x4f = y(11); % free Xist produced by chromosome X4
+x4b = y(12); % bound Xist on chromosome X4
+s4b = y(13); % bound SPEN on chromosome X4
+
+dy = [a_act/(1 +(s1b/K_n)^n) + a_act/(1 +(s2b/K_n)^n) + a_act/(1 +(s3b/K_n)^n) + a_act/(1 +(s4b/K_n)^n) - d_act*act;
+    
+    a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m);
+    k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m);
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x1b - s1b)  - k4*s1b;
+
+    a_x*act/(K_a + act) - d_x*x2f - k1*(XbsT - x2b)*x2f + k2*x2b/(1+(s2b/K_S)^m);
+    k1*(XbsT - x2b)*x2f - k2*x2b/(1+(s2b/K_S)^m);
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x2b - s2b)  - k4*s2b;
+
+    a_x*act/(K_a + act) - d_x*x3f - k1*(XbsT - x3b)*x3f + k2*x3b/(1+(s3b/K_S)^m);
+    k1*(XbsT - x3b)*x3f - k2*x3b/(1+(s3b/K_S)^m);
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x3b - s3b)  - k4*s3b;
+
+    a_x*act/(K_a + act) - d_x*x4f - k1*(XbsT - x4b)*x4f + k2*x4b/(1+(s4b/K_S)^m);
+    k1*(XbsT - x4b)*x4f - k2*x4b/(1+(s4b/K_S)^m);
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x4b - s4b)  - k4*s4b;
+    ]; 
+end
