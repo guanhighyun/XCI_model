@@ -62,8 +62,8 @@ s1b = y(4); % bound SPEN
 
 dy = [a_act/(1 +(s1b/K_n)^n) - d_act*act;
 
-    a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m);
-    k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m);
+    a_x*act/(K_a + act) - d_x*x1f - (XbsT - x1b)*x1f*(k1+k5*(s1b^m)/(s1b^m + K_S^m)) + k2*x1b;
+    k1*(XbsT - x1b)*x1f - k2*x1b;
     k3*(sT - s1b)*(N_S*x1b - s1b) - k4*s1b;
     ]; 
 end
