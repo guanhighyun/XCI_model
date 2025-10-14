@@ -40,7 +40,3 @@
 ## Citation
 
 Please cite the associated publication when using this code in your research.
-
----
-
-*This README provides a comprehensive guide to using the XCI computational model. For specific implementation details, please refer to the comments within individual code files.*
