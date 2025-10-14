@@ -41,7 +41,7 @@ fprintf(fid, 'boundaries z -8.1 8.1 r\n');
 fprintf(fid, 'species Activator TC SPEN Xist Xistb BS SPENb Act_gene XS XS1 XS2 XS3 XS4 XS5 XS6 XS7 XS8 XS9 XS10\n');
 
 % Diffusion coefficient. Unit: um^2/min
-fprintf(fid, 'difc Xist(soln) %g\n',0.01);
+fprintf(fid, 'difc Xist(soln) %g\n',0.4);
 fprintf(fid, 'difc TC %g\n',0);
 fprintf(fid, 'difc Act_gene %g\n',0);
 fprintf(fid, 'difc Xistb %g\n',0);

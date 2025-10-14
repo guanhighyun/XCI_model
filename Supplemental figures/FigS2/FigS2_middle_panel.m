@@ -65,7 +65,7 @@ k1 = 0.0020; % rate constant for Xist binding to DNA
 k2 = 4.54; % maximum dissociation rate for Xist
 k4 = 0.11; % dissoication rate for bound SPEN
 k3 = 8.26; % association rate for SPEN
-sT = 1000;  % total SPEN quantity
+sT = 70;  % total SPEN quantity
 XbsT =  100; % quantity of Xist binding sites
 N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
                       % We let each chromosome be able to recruit and bind to all SPEN.

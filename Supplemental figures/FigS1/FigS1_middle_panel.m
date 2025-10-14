@@ -52,41 +52,23 @@ caxis([0,5])
 function dy = ODE_model(t,y)
 
 %Model parameters
-a_act =  66.8; % activator synthesis rate from single X chromosome
-d_act = 0.048; % degradation rate of free activator 
-K_n = 1.0; % quantity of bound SPEN at which activator synthesis rate is half max.
-n = 10.0;% Hill coefficient for SPEN supressing activator synthesis rate. 
-a_x = 5.9; % xist synthesis rate from single X chromosome
-d_x = 0.0041; % degradation rate of Xist 
-m = 3.85; % Hill coefficient for bound SPEN reducing dissociation rate Xist
-K_S = 7.40; % quantity of SPEN at which Xist dissociation is half max
-K_a = 76.5; % quantity of activator at which Xist transcription is half max
-k1 = 0.0024; % rate constant for Xist binding to DNA
-k2 = 4.21; % maximum dissociation rate for Xist
-k4 = 8.78; % dissoication rate for bound SPEN
-k3 = 0.014; % association rate for SPEN
-sT = 194;  % total SPEN quantity
+a_act =  1.1; % activator synthesis rate from single X chromosome
+d_act = 0.72; % degradation rate of free activator 
+K_n = 2.2; % quantity of bound SPEN at which activator synthesis rate is half max.
+n = 9.4;% Hill coefficient for SPEN supressing activator synthesis rate. 
+a_x = 3.2; % xist synthesis rate from single X chromosome
+d_x = 0.0076; % degradation rate of Xist 
+m = 3.09; % Hill coefficient for bound SPEN reducing dissociation rate Xist
+K_S = 2.06; % quantity of SPEN at which Xist dissociation is half max
+K_a = 16.1; % quantity of activator at which Xist transcription is half max
+k1 = 0.0084; % rate constant for Xist binding to DNA
+k2 = 8.7; % maximum dissociation rate for Xist
+k4 = 10.2; % dissoication rate for bound SPEN
+k3 = 0.00026; % association rate for SPEN
+sT = 1000;  % total SPEN quantity
 XbsT =  100; % quantity of Xist binding sites
 N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
                       % We let each chromosome be able to recruit and bind to all SPEN.
-
-% a_act =  0.054; % activator synthesis rate from single X chromosome
-% d_act = 0.00846; % degradation rate of free activator 
-% K_n = 1.0; % quantity of bound SPEN at which activator synthesis rate is half max.
-% n = 9.9;% Hill coefficient for SPEN supressing activator synthesis rate. 
-% a_x = 6.05; % xist synthesis rate from single X chromosome
-% d_x = 0.0090; % degradation rate of Xist 
-% m = 3.18; % Hill coefficient for bound SPEN reducing dissociation rate Xist
-% K_S = 3.81; % quantity of SPEN at which Xist dissociation is half max
-% K_a = 7.73; % quantity of activator at which Xist transcription is half max
-% k1 = 0.0016; % rate constant for Xist binding to DNA
-% k2 = 1.78; % maximum dissociation rate for Xist
-% k4 = 5.5; % dissoication rate for bound SPEN
-% k3 = 0.091; % association rate for SPEN
-% sT = 51;  % total SPEN quantity
-% XbsT =  100; % quantity of Xist binding sites
-% N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
-%                       % We let each chromosome be able to recruit and bind to all SPEN.
 
 act = y(1); % Xist activator
 
