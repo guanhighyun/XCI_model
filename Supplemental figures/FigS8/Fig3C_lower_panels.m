@@ -1,22 +1,23 @@
 clear; 
 % Time
-tspan = [0:100:40000];
+tspan = [0:100:6000];
 
 % Error tolerance
 options = odeset('RelTol',1e-8,'AbsTol',repmat(1e-8,[1,13]));
 
 % Set the value of nuclear volumes
-V_list = [1, 1.3, 1.5, 2];
+V_list = [3];
+sT = 750*3.4;
 
 for i = 1:numel(V_list)
     V = V_list(i);
     %initial conditions
     act = 0; s1b = 0; x1f = 0; s2b = 0; x2f = 0; s3b = 0; x3f = 0; s4b = 0; x4f = 0;
-    x1b = 1/V; x2b = 2/V; x3b = 10/V; x4b = 20/V;
+    x1b = 1/V; x2b = 2/V; x3b = 3/V; x4b = 4/V;
     y0 = [act;x1f;x1b;s1b;x2f;x2b;s2b;x3f;x3b;s3b;x4f;x4b;s4b];
     
     % Solve equations
-    [t,y] = ode45(@(tt,yy) ODE_model(tt,yy,V),tspan,y0,options);
+    [t,y] = ode45(@(tt,yy) ODE_model(tt,yy,V,sT),tspan,y0,options);
     actout = y(:,1)*V;
     x1fout = y(:,2)*V;
     x1bout = y(:,3)*V;
@@ -37,7 +38,7 @@ for i = 1:numel(V_list)
     set(gca,'fontsize',40)
 end
 
-function dy = ODE_model(t,y,V)
+function dy = ODE_model(t,y,V, sT)
 %Model parameters
 a_act =  1.1/V; % activator synthesis rate from single X chromosome
 d_act = 0.72; % degradation rate of free activator
@@ -58,7 +59,7 @@ k2 = 8.7; % maximum dissociation rate for Xist
 k4 = 10.2; % dissoication rate for bound SPEN
 k5 = 0.00026*V; % association rate for SPEN
 
-sT = 1000/V;  % total SPEN concentration
+sT = sT/V;  % total SPEN concentration
 XbsT =  100/V; % concentration of Xist binding sites
 
 N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist
