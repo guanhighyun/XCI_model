@@ -1,6 +1,6 @@
 clear; 
 % Time
-tspan = [0:100:40000];
+tspan = [0:0.5:600];
 
 % Error tolerance
 options = odeset('RelTol',1e-8,'AbsTol',repmat(1e-8,[1,13]));

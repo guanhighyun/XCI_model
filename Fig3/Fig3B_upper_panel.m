@@ -18,7 +18,8 @@ x4bout = nan(1,numel(V_list));
 
 for i = 1:numel(V_list)
     % Write initial conditions with units of concentrations
-    x1b = 1/V_list(i); x2b = 2/V_list(i); x3b = 3/V_list(i); x4b = 4/V_list(i);
+    %x1b = 1/V_list(i); x2b = 2/V_list(i); x3b = 3/V_list(i); x4b = 4/V_list(i);
+    x1b = 1; x2b = 2; x3b = 3; x4b = 4;
     y0 = [act;x1f;x1b;s1b;x2f;x2b;s2b;x3f;x3b;s3b;x4f;x4b;s4b];
 
     [t,y] = ode45(@(tt,yy) ODE_model(tt,yy,V_list(i)),tspan,y0,options);
