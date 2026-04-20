@@ -1,5 +1,5 @@
 % Time
-tspan = [0,20000];
+tspan = [0:1:2000];
 
 % Error tolerance
 options = odeset('RelTol',1e-10,'AbsTol',repmat(1e-10,[1,10]));
@@ -10,7 +10,7 @@ x1b = 1; x2b = 2; x3b = 3;
 y0 = [act;x1f;x1b;s1b;x2f;x2b;s2b;x3f;x3b;s3b];
 
 % Solve equations
-sT = 105; % Total SPEN
+sT = 170; % Total SPEN
 [t,y] = ode15s(@(tt,yy) ODE_model(tt,yy,sT),tspan,y0,options);
 actout = y(:,1);
 x1fout = y(:,2);
@@ -25,10 +25,10 @@ s3bout = y(:,10);
 
 % Plot results
 figure; plot(t, x1bout, 'LineWidth',3);  hold on; plot(t, x2bout, 'LineWidth',3); plot(t, x3bout, 'LineWidth',3); title('Bound Xist'); set(gca,'fontsize',35)
-%legend('ChrX #1','ChrX #2','ChrX #3','Location','best'); ylim([0,100])
+legend('ChrX #1','ChrX #2','ChrX #3','Location','best'); ylim([0,100])
 
 figure; plot(t, s1bout, 'LineWidth',3);  hold on; plot(t, s2bout, 'LineWidth',3); plot(t, s3bout, 'LineWidth',3); title('Bound SPEN'); set(gca,'fontsize',35)
-%ylim([0,80]); legend('ChrX #1','ChrX #2','ChrX #3','Location','best'); 
+ylim([0,80]); legend('ChrX #1','ChrX #2','ChrX #3','Location','best'); 
 
 figure; plot(t, actout, 'LineWidth',3); title('Activator'); set(gca,'fontsize',35)
 
@@ -52,7 +52,7 @@ k4 = 0.11; % dissoication rate for bound SPEN
 k3 = 8.26; % association rate for SPEN
 sT = sT;  % total SPEN quantity
 XbsT =  100; % quantity of Xist binding sites
-N_S = 1; round(sT/XbsT); % Number of SPEN that bind to one Xist. 
+N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
                       % We let each chromosome be able to recruit and bind to all SPEN.
 
 act = y(1);

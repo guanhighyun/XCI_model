@@ -1,9 +1,9 @@
 % Time
 tspan = [0:1:20000];
 
-% Scan list of activator and Xist synthesis rate
-a_act_list = [0.01:0.01:2];
-a_x_list = [1:0.02:5];
+% Scan list of k1 and k3
+k1_list = [0.0005:0.00005:0.01];
+k3_list = [0.00001:0.000005:0.0007]; 
 
 % Error tolerance
 options = odeset('RelTol',1e-10,'AbsTol',repmat(1e-10,[1,13]));
@@ -14,14 +14,14 @@ x1b = 1; x2b = 2; x3b = 3; x4b = 4;
 y0 = [act;x1f;x1b;s1b;x2f;x2b;s2b;x3f;x3b;s3b;x4f;x4b;s4b];
 
 % Solve equations
-x1bout = nan(numel(a_act_list),numel(a_x_list));
-x2bout = nan(numel(a_act_list),numel(a_x_list));
-x3bout = nan(numel(a_act_list),numel(a_x_list));
-x4bout = nan(numel(a_act_list),numel(a_x_list));
+x1bout = nan(numel(k1_list),numel(k3_list));
+x2bout = nan(numel(k1_list),numel(k3_list));
+x3bout = nan(numel(k1_list),numel(k3_list));
+x4bout = nan(numel(k1_list),numel(k3_list));
 
-for i = 1:numel(a_act_list)
-    for j = 1:numel(a_x_list)
-        [t,y] = ode45(@(tt,yy) ODE_model(tt,yy,a_act_list(i),a_x_list(j)),tspan,y0,options);
+for i = 1:numel(k1_list)
+    for j = 1:numel(k3_list)
+        [t,y] = ode45(@(tt,yy) ODE_model(tt,yy,k1_list(i),k3_list(j)),tspan,y0,options);
         % Extract values from the 10000 to 20000 min and calculate the mean
         x1bout(i,j) = mean(y(end-10000:end,3));
         x2bout(i,j) = mean(y(end-10000:end,6));
@@ -29,11 +29,11 @@ for i = 1:numel(a_act_list)
         x4bout(i,j) = mean(y(end-10000:end,12));
     end
 end
-save('Fig3A.mat')
+save('Fig3B.mat')
 
 % Plot the bifurcation diagram
 figure;
-regime = zeros(numel(a_act_list),numel(a_x_list));
+regime = zeros(numel(k1_list),numel(k5_list));
 
 % Use a bound Xist ratio of 1.2 as the threshold to define regimes
 regime(x2bout./x1bout<1.2) = 0;
@@ -41,24 +41,23 @@ regime(x2bout./x1bout>=1.2) = 3;
 regime(x3bout./x1bout>=1.2 & x2bout./x1bout<2) = 2;
 regime(x4bout./x1bout>=1.2 & x3bout./x1bout<2) = 1;
 
-imagesc(regime); set(gca,'ydir','normal'); ylabel('\alpha_{A} (min^{-1})');
-xlabel('\alpha_x (min^{-1})'); 
-set(gca,'fontsize',20);
-xticks([1:50:201])
-xticklabels(a_x_list([1:50:201]))
-yticks([1,50:50:201])
-yticklabels(a_act_list([1,50:50:201]))
-axis square
+imagesc(regime); set(gca,'ydir','normal'); ylabel('k_1 (min^{-1})');
+xlabel('k_3 (min^{-1})'); 
+set(gca,'fontsize',20)
+xticks([1,39:40:139])
+xticklabels(k3_list([1,39:40:139]))
+yticks([1,41:40:191])
+yticklabels(k1_list([1,41:40:191]))
 
-function dy = ODE_model(t,y,a_act,a_x)
+function dy = ODE_model(t,y,k1,k3)
 %Model parameters
-a_act =  a_act; % activator synthesis rate from single X chromosome
+a_act =  1.1; % activator synthesis rate from single X chromosome
 d_act = 0.72; % degradation rate of free activator
 
 K_n = 2.2; % quantity of bound SPEN at which activator synthesis rate is half max.
 n = 9.4; % Hill coefficient for SPEN supressing activator synthesis rate. 
 
-a_x = a_x; % xist synthesis rate from single X chromosome
+a_x = 3.2; % xist synthesis rate from single X chromosome
 d_x = 0.0076; % degradation rate of Xist 
 
 m = 3.09; % Hill coefficient for bound SPEN reducing dissociation rate Xist
@@ -66,10 +65,10 @@ K_S = 2.06; % quantity of SPEN at which Xist dissociation is half max
 
 K_a = 16.1; % quantity of activator at which Xist transcription is half max
 
-k1 = 0.0084; % rate constant for Xist binding to DNA
+k1 = k1; % rate constant for Xist binding to DNA
 k2 = 8.7; % maximum dissociation rate for Xist
 k4 = 10.2; % dissoication rate for bound SPEN
-k5 = 0.00026; % association rate for SPEN
+k3 = k3; % association rate for SPEN
 
 sT = 1000; % total SPEN quantity
 XbsT =  100; % quantity of Xist binding sites
@@ -99,18 +98,18 @@ dy = [a_act/(1 +(s1b/K_n)^n) + a_act/(1 +(s2b/K_n)^n) + a_act/(1 +(s3b/K_n)^n) +
     
     a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m);
     k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x1b - s1b)  - k4*s1b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x1b - s1b)  - k4*s1b;
 
     a_x*act/(K_a + act) - d_x*x2f - k1*(XbsT - x2b)*x2f + k2*x2b/(1+(s2b/K_S)^m);
     k1*(XbsT - x2b)*x2f - k2*x2b/(1+(s2b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x2b - s2b)  - k4*s2b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x2b - s2b)  - k4*s2b;
 
     a_x*act/(K_a + act) - d_x*x3f - k1*(XbsT - x3b)*x3f + k2*x3b/(1+(s3b/K_S)^m);
     k1*(XbsT - x3b)*x3f - k2*x3b/(1+(s3b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x3b - s3b)  - k4*s3b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x3b - s3b)  - k4*s3b;
 
     a_x*act/(K_a + act) - d_x*x4f - k1*(XbsT - x4b)*x4f + k2*x4b/(1+(s4b/K_S)^m);
     k1*(XbsT - x4b)*x4f - k2*x4b/(1+(s4b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x4b - s4b)  - k4*s4b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x4b - s4b)  - k4*s4b;
     ]; 
 end

@@ -6,8 +6,8 @@ tspan = [0:100:6000];
 options = odeset('RelTol',1e-8,'AbsTol',repmat(1e-8,[1,13]));
 
 % Set the value of nuclear volumes
-V_list = [3];
-sT = 750*3.4;
+V_list = 2;
+sT = 750;
 
 for i = 1:numel(V_list)
     V = V_list(i);
