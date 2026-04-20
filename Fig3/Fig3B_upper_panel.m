@@ -64,7 +64,7 @@ K_a = 16.1; % concentration of activator at which Xist transcription is half max
 k1 = 0.0084*V; % rate constant for Xist binding to DNA
 k2 = 8.7; % maximum dissociation rate for Xist
 k4 = 10.2; % dissoication rate for bound SPEN
-k5 = 0.00026*V; % association rate for SPEN
+k3 = 0.00026*V; % association rate for SPEN
 
 sT = 1000/V;  % total SPEN concentration
 XbsT =  100/V; % concentration of Xist binding sites
@@ -93,18 +93,18 @@ dy = [a_act/(1 +(s1b/K_n)^n) + a_act/(1 +(s2b/K_n)^n) + a_act/(1 +(s3b/K_n)^n) +
     
     a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m);
     k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x1b - s1b)  - k4*s1b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x1b - s1b)  - k4*s1b;
 
     a_x*act/(K_a + act) - d_x*x2f - k1*(XbsT - x2b)*x2f + k2*x2b/(1+(s2b/K_S)^m);
     k1*(XbsT - x2b)*x2f - k2*x2b/(1+(s2b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x2b - s2b)  - k4*s2b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x2b - s2b)  - k4*s2b;
 
     a_x*act/(K_a + act) - d_x*x3f - k1*(XbsT - x3b)*x3f + k2*x3b/(1+(s3b/K_S)^m);
     k1*(XbsT - x3b)*x3f - k2*x3b/(1+(s3b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x3b - s3b)  - k4*s3b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x3b - s3b)  - k4*s3b;
 
     a_x*act/(K_a + act) - d_x*x4f - k1*(XbsT - x4b)*x4f + k2*x4b/(1+(s4b/K_S)^m);
     k1*(XbsT - x4b)*x4f - k2*x4b/(1+(s4b/K_S)^m);
-    k5*(sT - s1b - s2b - s3b - s4b)*(N_S*x4b - s4b)  - k4*s4b;
+    k3*(sT - s1b - s2b - s3b - s4b)*(N_S*x4b - s4b)  - k4*s4b;
     ]; 
 end
