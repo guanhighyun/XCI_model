@@ -1,3 +1,5 @@
+addpath(fullfile(fileparts(mfilename('fullpath')), '..', '..'));
+
 % Time
 tspan = [0:0.5:2000];
 
@@ -11,10 +13,13 @@ y0 = [act;x1f;x1b;s1b];
 
 % Solve equations
 
-% Total SPEN 
+% Total SPEN
 sT = 676;
 
-[t,y] = ode45(@(tt,yy) ODE_model(tt,yy,sT),tspan,y0,options);
+N_c = 1;
+p = xci_params('figS7');
+
+[t,y] = ode45(@(tt,yy) ODE_model_shared_xist(tt,yy,p,N_c),tspan,y0,options);
 actout = y(:,1);
 x1bout = y(:,3);
 s1bout = y(:,4);
@@ -31,36 +36,3 @@ set(gca,'fontsize',35); ylim([0,80])
 
 figure(4); plot(t,sT - s1bout, 'LineWidth',3); title('Free SPEN')
 set(gca,'fontsize',35); ylim([0,800])
-
-
-function dy = ODE_model(t,y,sT)
-%Model parameters
-a_act =  0.707; % activator synthesis rate from single X chromosome
-d_act = 0.028; % degradation rate of free activator
-K_n = 57.8; % quantity of bound SPEN at which activator synthesis rate is half max.
-n = 4.39; % Hill coefficient for SPEN supressing activator synthesis rate. 
-a_x = 3.9; % xist synthesis rate from single X chromosome
-d_x = 0.027; % degradation rate of Xist 
-m = 2.58;  % Hill coefficient for bound SPEN reducing dissociation rate Xist
-K_S = 26.8; % quantity of SPEN at which Xist dissociation is half max
-K_a = 351; % quantity of activator at which Xist transcription is half max
-k1 = 0.0018; % rate constant for Xist binding to DNA
-k2 = 1.42; % maximum dissociation rate for Xist
-k4 = 0.10; % association rate for SPEN
-k3 = 9.9; % dissoication rate for bound SPEN
-sT = sT;  % total SPEN quantity
-XbsT = 101; % quantity of Xist binding sites
-N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
-                      % We let each chromosome be able to recruit and bind to all SPEN.
-
-act = y(1);
-x1f = y(2);
-x1b = y(3);
-s1b = y(4);
-
-dy = [a_act/(1 +(s1b/K_n)^n) - d_act*act
-      a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m)
-      k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m)
-      k3*(sT - s1b)*(N_S*x1b - s1b)  - k4*s1b
-    ];
-end

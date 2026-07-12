@@ -1,3 +1,5 @@
+addpath(fullfile(fileparts(mfilename('fullpath')), '..', '..'));
+
 % Perform scan of different initial conditions of bound Xist
 % for XX case
 
@@ -6,6 +8,9 @@ tspan = [0:50:6000];
 
 % Error tolerance
 options = odeset('RelTol',1e-8,'AbsTol',repmat(1e-10,[1,7]));
+
+N_c = 2;
+p = xci_params('fig2');
 
 % Initial conditions
 act = 0; s1b = 0; x1f = 0; s2b = 0; x2f = 0;
@@ -23,7 +28,7 @@ s2bout = nan(numel(x1b_IC),numel(x2b_IC));
 for i = 1:numel(x1b_IC)
     for j = 1:numel(x2b_IC)
         y0 = [act;x1f;x1b_IC(i);s1b;x2f;x2b_IC(j);s2b];
-        [t,y] = ode15s(@(tt,yy) ODE_model(tt,yy),tspan,y0,options);
+        [t,y] = ode15s(@(tt,yy) ODE_model(tt,yy,p,N_c),tspan,y0,options);
         x1bout(i,j) = y(end,3);
         s1bout(i,j) = y(end,4);
         x2bout(i,j) = y(end,6);
@@ -48,43 +53,3 @@ set(gca,'ydir','normal')
 set(gca,'fontsize',25)
 axis square
 caxis([0,5])
-
-function dy = ODE_model(t,y,sT)
-
-%Model parameters
-a_act =  12.8; % activator synthesis rate from single X chromosome
-d_act = 0.13; % degradation rate of free activator
-K_n = 7.13; % quantity of bound SPEN at which activator synthesis rate is half max.
-n = 1.0; % Hill coefficient for SPEN supressing activator synthesis rate. 
-a_x = 9.0; % xist synthesis rate from single X chromosome
-d_x = 0.031; % degradation rate of Xist 
-m = 2.0;  % Hill coefficient for bound SPEN reducing dissociation rate Xist
-K_S = 4.3; % quantity of SPEN at which Xist dissociation is half max
-K_a = 374.6; % quantity of activator at which Xist transcription is half max
-k1 = 0.0020; % rate constant for Xist binding to DNA
-k2 = 4.54; % maximum dissociation rate for Xist
-k4 = 0.11; % dissoication rate for bound SPEN
-k3 = 8.26; % association rate for SPEN
-sT = 70;  % total SPEN quantity
-XbsT =  100; % quantity of Xist binding sites
-N_S = round(sT/XbsT); % Number of SPEN that bind to one Xist. 
-                      % We let each chromosome be able to recruit and bind to all SPEN.
-
-act = y(1);
-x1f = y(2);
-x1b = y(3);
-s1b = y(4);
-
-x2f = y(5);
-x2b = y(6);
-s2b = y(7);
-
-dy = [a_act/(1 +(s1b/K_n)^n) + a_act/(1 +(s2b/K_n)^n) - d_act*act;
-    a_x*act/(K_a + act) - d_x*x1f - k1*(XbsT - x1b)*x1f + k2*x1b/(1+(s1b/K_S)^m);
-    k1*(XbsT - x1b)*x1f - k2*x1b/(1+(s1b/K_S)^m);
-    k3*(sT - s1b - s2b)*(N_S*x1b - s1b)  - k4*s1b;
-    a_x*act/(K_a + act) - d_x*x2f - k1*(XbsT - x2b)*x2f + k2*x2b/(1+(s2b/K_S)^m);
-    k1*(XbsT - x2b)*x2f - k2*x2b/(1+(s2b/K_S)^m);
-    k3*(sT - s1b - s2b)*(N_S*x2b - s2b)  - k4*s2b;
-    ]; 
-end
