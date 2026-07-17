@@ -10,9 +10,9 @@ N_c = 4;
 p = xci_params('activator_inhibition');
 
 % Set the value of nuclear volumes (Up to 2X volume as per manuscript)
-V_list = 1:0.01:2; 
+V_list = 1:0.002:2; 
 sT = 1000;
-new_sT_list = sT * (1:0.01:2);
+new_sT_list = sT * (1:0.002:2);
 
 x1bout = nan(numel(V_list),numel(new_sT_list));
 x2bout = nan(numel(V_list),numel(new_sT_list));
@@ -47,20 +47,22 @@ for i = 1:numel(V_list)
 end
 save('Fig3C.mat')
 
-% Plot the bifurcation diagram
 figure;
-regime = zeros(numel(k1_list),numel(k3_list));
+regime = zeros(numel(V_list),numel(new_sT_list));
 
 % Use a bound Xist ratio of 1.2 as the threshold to define regimes
-regime(x2bout./x1bout<1.2) = 0;
-regime(x2bout./x1bout>=1.2) = 3;
-regime(x3bout./x1bout>=1.2 & x2bout./x1bout<2) = 2;
-regime(x4bout./x1bout>=1.2 & x3bout./x1bout<2) = 1;
+regime(x2bout./x1bout < 1.2) = 0;
+regime(x2bout./x1bout >= 1.2) = 3;
+regime(x3bout./x1bout >= 1.2 & x2bout./x1bout < 2) = 2;
+regime(x4bout./x1bout >= 1.2 & x3bout./x1bout < 2) = 1;
 
-imagesc(regime); set(gca,'ydir','normal'); ylabel('k_1 (min^{-1})');
-xlabel('k_3 (min^{-1})'); 
-set(gca,'fontsize',20)
-xticks([1,39:40:139])
-xticklabels(k3_list([1,39:40:139]))
-yticks([1,41:40:191])
-yticklabels(k1_list([1,41:40:191]))
+% Plot
+imagesc(V_list, new_sT_list/sT, regime');
+set(gca,'YDir','normal');
+
+xlabel('Relative volume');
+ylabel('Relative SPEN abundance S/S^T');
+set(gca,'FontSize',20);
+
+xticks(1:0.2:2);
+yticks(1:0.2:2);
